@@ -1,0 +1,29 @@
+import os
+
+def block_websites(websites):
+    hosts_file = r'C:\Windows\System32\drivers\etc\hosts'  # Chemin vers le fichier hosts sur Windows
+
+    # Vérifier si l'utilisateur a les permissions d'administrateur
+    if os.name != 'nt' and os.getuid() != 0:
+        print("Ce script doit être exécuté avec des privilèges d'administrateur.")
+        return
+
+    # Ajouter les entrées dans le fichier hosts pour bloquer les sites web
+    with open(hosts_file, 'a') as file:
+        for website in websites:
+            entry = '0.0.0.0 ' + website
+            file.write(entry + '\n')
+
+    print("Les sites web ont été bloqués avec succès.")
+
+# Liste des sites web à bloquer
+websites = [
+    'https://www.campingcarpark.com/en_GB/',
+    'facebook.com',
+    'youtube.com',
+    'twitter.com',
+    'instagram.com'
+]
+
+# Exécuter la fonction principale
+block_websites(websites)

@@ -1,0 +1,28 @@
+import subprocess
+
+def check_firefox_security():
+    # Vérifier si l'exécutable Firefox est présent
+    try:
+        subprocess.run(["firefox", "--version"], capture_output=True, check=True)
+    except FileNotFoundError:
+        print("Firefox n'est pas installé sur votre système.")
+        return
+
+    # Vérifier si les mises à jour de Firefox sont activées
+    firefox_prefs = subprocess.run(["firefox", "--preferences"], capture_output=True, text=True)
+    if "app.update.enabled=false" in firefox_prefs.stdout:
+        print("Les mises à jour de Firefox sont désactivées. Veuillez les activer pour maintenir la sécurité de votre navigateur.")
+
+    # Vérifier si le bloqueur de contenu est activé
+    about_config = subprocess.run(["firefox", "--new-instance", "about:config"], capture_output=True, text=True)
+    if "privacy.trackingprotection.enabled=false" in about_config.stdout:
+        print("Le bloqueur de contenu de Firefox est désactivé. Veuillez l'activer pour bloquer les trackers et améliorer votre sécurité en ligne.")
+
+    # Vérifier si les plugins non signés sont bloqués
+    if "xpinstall.signatures.required=false" in about_config.stdout:
+        print("Les plugins non signés sont autorisés dans Firefox. Il est recommandé de les bloquer pour réduire les risques de sécurité.")
+
+    # Ajouter d'autres vérifications de sécurité ici
+
+# Exécuter la fonction principale
+check_firefox_security()

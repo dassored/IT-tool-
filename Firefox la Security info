@@ -1,0 +1,63 @@
+mport os
+import json
+import winreg
+import glob
+
+# Vérification de la présence de modules complémentaires potentiellement malveillants
+malicious_addons = []
+addons_path = os.path.join(os.getenv('APPDATA'), 'Mozilla', 'Firefox', 'Profiles', '*.default-release', 'extensions')
+addon_folders = [folder for folder in glob.glob(addons_path) if os.path.isdir(folder)]
+for addon_folder in addon_folders:
+    manifest_path = os.path.join(addon_folder, 'manifest.json')
+    if os.path.exists(manifest_path):
+        with open(manifest_path) as file:
+            manifest_data = json.load(file)
+            if manifest_data.get('dangerous'):
+                malicious_addons.append(os.path.basename(addon_folder))
+
+# Vérification des paramètres de sécurité
+security_settings = {
+    'Tracking Protection': '',
+    'Block Pop-ups': '',
+    # Ajoutez d'autres paramètres de sécurité ici...
+}
+
+try:
+    firefox_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'Software\\Mozilla\\Firefox\\Extensions')
+    for setting_name, setting_value in security_settings.items():
+        try:
+            setting_key = winreg.OpenKey(firefox_key, setting_name)
+            security_settings[setting_name] = winreg.QueryValueEx(setting_key, '')[0]
+        except FileNotFoundError:
+            pass
+    winreg.CloseKey(firefox_key)
+except FileNotFoundError:
+    pass
+
+# Vérification des mises à jour
+firefox_version = ''
+firefox_update_url = 'https://www.mozilla.org/en-US/firefox/new/'
+try:
+    firefox_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, 'SOFTWARE\\Mozilla\\Mozilla Firefox')
+    firefox_version = winreg.QueryValueEx(firefox_key, 'CurrentVersion')[0]
+    winreg.CloseKey(firefox_key)
+except FileNotFoundError:
+    pass
+
+# Génération du rapport de sécurité
+report = "--------------------------\n"
+report += "Security Analysis Report\n"
+report += "--------------------------\n\n"
+report += "Malicious Add-ons:\n"
+report += ', '.join(malicious_addons) + '\n\n'
+report += "Security Settings:\n"
+report += '\n'.join([f"  {setting_name}: {setting_value}" for setting_name, setting_value in security_settings.items()]) + '\n\n'
+report += f"Firefox Version: {firefox_version}\n"
+report += f"Firefox Update URL: {firefox_update_url}\n"
+
+# Enregistrement du rapport sur le bureau
+report_path = os.path.join(os.path.expanduser("~"), "Desktop", "SecurityAnalysisReport.txt")
+with open(report_path, 'w') as file:
+    file.write(report)
+
+print(f"L'analyse de sécurité de Firefox est terminée. Le rapport a été enregistré sur le bureau : {report_path}")

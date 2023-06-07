@@ -1,0 +1,12 @@
+import android
+
+droid = android.Android()
+
+# Fonction pour vérifier les paramètres de confidentialité
+def check_privacy_settings():
+    privacy_settings = droid.getSecureSettings()
+    for setting in privacy_settings:
+        print(setting)
+
+# Utilisation de la fonction pour vérifier les paramètres de confidentialité
+check_privacy_settings()

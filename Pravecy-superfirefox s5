@@ -1,0 +1,58 @@
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+# Configuration des options du navigateur Firefox
+options = Options()
+options.headless = True  # Exécuter le navigateur en mode headless (sans affichage)
+
+# Création d'une instance du navigateur Firefox
+driver = webdriver.Firefox(options=options)
+
+# Ouvrir "about:config"
+driver.get("about:config")
+
+# Accepter le risque le cas échéant
+try:
+    accept_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "warningButton")))
+    accept_button.click()
+except:
+    pass
+
+# Liste des préférences à modifier
+preferences = {
+    "privacy.firstparty.isolate": True,
+    "privacy.resistFingerprinting": True,
+    "privacy.trackingprotection.fingerprinting.enabled": True,
+    "privacy.trackingprotection.cryptomining.enabled": True,
+    "privacy.trackingprotection.enabled": True,
+    "browser.send_pings": False,
+    "browser.urlbar.speculativeConnect.enabled": False,
+    "dom.event.clipboardevents.enabled": False,
+    "media.eme.enabled": False,
+    "media.gmp-widevinecdm.enabled": False,
+    "media.navigator.enabled": False,
+    "network.cookie.cookieBehavior": 1,
+    "network.http.referer.XOriginPolicy": 2,
+    "network.http.referer.XOriginTrimmingPolicy": 2,
+    "webgl.disabled": True,
+    "browser.sessionstore.privacy_level": 2,
+    "beacon.enabled": False,
+    "browser.safebrowsing.downloads.remote.enabled": False,
+    "network.dns.disablePrefetch": True,
+    "network.dns.disablePrefetchFromHTTPS": True,
+    "network.predictor.enabled": False,
+    "network.predictor.enable-prefetch": False,
+    "network.prefetch-next": False,
+    "network.IDN_show_punycode": True,
+    "media.peerconnection.enabled": False  # Désactiver WebRTC
+}
+
+# Modifier les préférences
+for preference, value in preferences.items():
+    driver.execute_script(f"Services.prefs.setBoolPref('{preference}', {str(value).lower()});")
+
+# Fermer le navigateur
+driver.quit()

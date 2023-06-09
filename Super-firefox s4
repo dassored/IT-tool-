@@ -1,0 +1,28 @@
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+
+# Configuration des options de Firefox
+options = Options()
+options.set_preference("privacy.resistFingerprinting", True)
+options.set_preference("privacy.trackingprotection.enabled", True)
+options.set_preference("privacy.trackingprotection.cryptomining.enabled", True)
+options.set_preference("privacy.trackingprotection.fingerprinting.enabled", True)
+options.set_preference("browser.safebrowsing.malware.enabled", True)
+options.set_preference("network.cookie.cookieBehavior", 1)  # 1 pour bloquer les cookies tiers
+options.set_preference("network.http.referer.XOriginPolicy", 2)
+options.set_preference("network.http.referer.trimmingPolicy", 2)
+options.set_preference("network.IDN_show_punycode", True)
+options.set_preference("media.peerconnection.enabled", False)  # Désactive WebRTC
+options.set_preference("media.peerconnection.turn.disable", True)
+options.set_preference("media.peerconnection.ice.default_address_only", True)
+options.set_preference("media.peerconnection.ice.no_host", True)
+
+# Configuration pour prévenir les fuites DNS
+options.set_preference("network.trr.mode", 3)
+options.set_preference("network.trr.uri", "https://mozilla.cloudflare-dns.com/dns-query")
+
+# Création de l'instance du navigateur Firefox avec les options configurées
+driver = webdriver.Firefox(options=options)
+
+# Fermeture du navigateur
+driver.quit()

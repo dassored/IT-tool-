@@ -1,0 +1,28 @@
+import os
+import subprocess
+
+# Chemin d'accès au fichier MMC
+mmc_file_path = os.path.join(os.path.expanduser("~"), "Desktop", "super-mmc.msc")
+
+# Création de la commande pour générer la MMC
+command = f"mmc.exe {mmc_file_path}"
+
+# Ajout des modules à la MMC
+modules = [
+    "perfmon.msc",       # Analyseur de performances
+    "wf.msc",            # Pare-feu Windows
+    "taskschd.msc",      # Planificateur de tâches
+    "lusrmgr.msc",       # Utilisateurs et groupes locaux
+    "powercfg.cpl",      # Options d'énergie sur le bureau Windows
+    "secpol.msc",        # Gestion des autorisations
+    "eventvwr.msc",      # Observateur d'événements
+    "securty.msc"        # Moniteur de sécurité
+]
+
+# Ajout des modules à la ligne de commande
+for module in modules:
+    command += f" /a \"{module}\""
+
+# Exécution de la commande
+subprocess.run(command, shell=True)
+

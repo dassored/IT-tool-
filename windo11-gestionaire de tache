@@ -1,0 +1,64 @@
+import tkinter as tk
+import psutil
+
+def get_running_processes():
+    processes = []
+    for proc in psutil.process_iter():
+        process_info = {
+            'pid': proc.pid,
+            'name': proc.name(),
+            'status': proc.status(),
+            'cpu_percent': proc.cpu_percent(),
+            'memory_percent': proc.memory_percent()
+        }
+        processes.append(process_info)
+    return processes
+
+def terminate_process():
+    selected_process = process_listbox.get(tk.ACTIVE)
+    pid = int(selected_process.split()[0])
+    process = psutil.Process(pid)
+    process.terminate()
+    update_process_list()
+
+def suspend_process():
+    selected_process = process_listbox.get(tk.ACTIVE)
+    pid = int(selected_process.split()[0])
+    process = psutil.Process(pid)
+    process.suspend()
+    update_process_list()
+
+def resume_process():
+    selected_process = process_listbox.get(tk.ACTIVE)
+    pid = int(selected_process.split()[0])
+    process = psutil.Process(pid)
+    process.resume()
+    update_process_list()
+
+def update_process_list():
+    process_listbox.delete(0, tk.END)
+    processes = get_running_processes()
+    for proc in processes:
+        process_listbox.insert(tk.END, f"{proc['pid']} - {proc['name']} - {proc['status']}")
+
+root = tk.Tk()
+root.title("Gestionnaire de tâches avancé")
+
+# Liste des processus
+process_listbox = tk.Listbox(root, width=50)
+process_listbox.pack(padx=10, pady=10)
+
+# Boutons d'action
+terminate_button = tk.Button(root, text="Terminer", command=terminate_process)
+terminate_button.pack(pady=5)
+
+suspend_button = tk.Button(root, text="Suspendre", command=suspend_process)
+suspend_button.pack(pady=5)
+
+resume_button = tk.Button(root, text="Reprendre", command=resume_process)
+resume_button.pack(pady=5)
+
+# Mise à jour de la liste des processus
+update_process_list()
+
+root.mainloop()

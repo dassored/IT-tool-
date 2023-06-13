@@ -1,0 +1,30 @@
+from watchdog.observer import observer
+from watchdog.event import FileChangeHandler
+
+#Modification
+
+class FileChangeHandler(FileSystemEventHandler):
+    def on_any_event(self,event):
+        if event.is_directory_directory :
+            return
+        elif event.event_type =='created':
+            print (f"Le fichier '{event.src_path}' a été ajouté.")
+        elif event.event_type =='modified':
+            print(f"Le fichier '{event.src_path}' a été modifié.")
+        elif event.event_type =='deleted':
+            print(f"Le fichier '{event.src_path}' a été supprimé.")
+
+if __name__ == "__maine__":
+    # Chemin du dossier NSA à surveiller 
+    folder_path = "chemin_vers_le_dossier" # C:\Users\damien IT\Desktop
+
+    event_handler()
+    observer = observer()
+    observer.schedule (event_handler, folder_path, recursive=True)
+
+    try:
+        while True:
+            pass
+    except KeyboardInterrupt:
+        observer.stop()
+    observer.join

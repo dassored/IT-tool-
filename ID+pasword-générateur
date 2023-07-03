@@ -1,0 +1,27 @@
+import random
+import string
+
+def generate_pseudonym():
+    vowels = 'aeiou'
+    consonants = ''.join(set(string.ascii_lowercase) - set(vowels))
+    pseudonym = ''.join(random.choice(consonants) + random.choice(vowels) for _ in range(3))
+    return pseudonym
+
+def generate_password(length=8):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
+def generate_full_password():
+    pseudonym = generate_pseudonym()
+    password = generate_password()
+    full_password = pseudonym + password
+    return full_password
+
+pseudo = generate_pseudonym()
+password = generate_password()
+full_password = generate_full_password()
+
+print("Pseudonyme :", pseudo)
+print("Mot de passe :", password)
+print("Phrase de passe complète :", full_password)

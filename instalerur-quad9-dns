@@ -1,0 +1,8 @@
+import ctypes
+
+def configurer_dns_quad9():
+    ctypes.windll.shell32.ShellExecuteW(None, "runas", "powershell", "Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses ('9.9.9.9', '149.112.112.112')", None, 1)
+    print("Les serveurs DNS Quad9 ont été configurés avec succès.")
+
+# Appel de la fonction pour configurer les serveurs DNS Quad9
+configurer_dns_quad9()

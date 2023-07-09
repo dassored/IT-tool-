@@ -1,0 +1,8 @@
+import subprocess
+
+def disable_telemetry ():
+    subprocess.run(['reg', 'add', 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DataCollection', '/v', 'AllowTelemetry', '/t', 'REG_DWORD', '/d', '0', '/f'])
+    print("Les services de télémétrie de Windows ont été désactivés.")
+
+# Exemple d'utilisation
+disable_telemetry

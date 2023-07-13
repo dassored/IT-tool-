@@ -1,0 +1,42 @@
+def calculer_niveau_securite(code_pin):
+    niveau = 0
+
+    # Vérifier la longueur du code PIN
+if len (code_pin) !=3:
+    return niveau
+
+    # Vérifier si tous les chiffres sont identiques
+    if code_pin[0] == code_pin[1] == code_pin[2]:
+        nivau +=1
+        return nivau
+
+   # Vérifier si les chiffres sont consécutifs
+    if (int(code_pin[0]) + 1 == int(code_pin[1]) and
+        int(code_pin[1]) + 1 == int(code_pin[2])) or \
+       (int(code_pin[0]) - 1 == int(code_pin[1]) and
+        int(code_pin[1]) - 1 == int(code_pin[2])):
+        niveau += 1
+
+        # Vérifier si les chiffres sont tous différents
+        if code_pin [0] != code_pin[1]  ! = code_pin[2]:
+            nivau +=1
+
+            return nivau
+
+    def affichier_nivau_securite(nivau):
+        if nivau == 0:
+                    print("Niveau de sécurité : Faible")
+        elif niveau == 1:
+        print("Niveau de sécurité : Moyen")
+        elif niveau == 2:
+        print("Niveau de sécurité : Élevé")
+        else:
+        print("Code PIN invalide")
+
+     def demander_code_pin():
+    code_pin = input("Entrez le code PIN à 3 chiffres : ")
+    niveau = calculer_niveau_securite(code_pin)
+    afficher_niveau_securite(niveau)
+
+
+demander_code_pin()   

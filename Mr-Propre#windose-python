@@ -1,0 +1,106 @@
+import os
+import shutil
+import subprocess
+import winreg
+
+# Supprimer les fichiers temporaires
+def clean_temp_files():
+    temp_dirs = [os.environ.get('TEMP'), os.path.join(os.environ.get('LOCALAPPDATA'), 'Temp')]
+    for temp_dir in temp_dirs:
+        for root, dirs, files in os.walk(temp_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                try:
+                    os.remove(file_path)
+                    print(f"Fichier supprimé : {file_path}")
+                except Exception as e:
+                    print(f"Erreur lors de la suppression du fichier {file_path}: {e}")
+
+# Vider la corbeille
+def empty_recycle_bin():
+    subprocess.run('powershell -Command "Clear-RecycleBin -Force"', shell=True)
+    print("Corbeille vidée avec succès.")
+
+# Supprimer les fichiers en cache
+def clean_cache():
+    cache_dir = os.path.join(os.environ.get('LOCALAPPDATA'), 'Microsoft\\Windows\\INetCache')
+    for root, dirs, files in os.walk(cache_dir):
+        for file in files:
+            file_path = os.path.join(root, file)
+            try:
+                os.remove(file_path)
+                print(f"Fichier supprimé : {file_path}")
+            except Exception as e:
+                print(f"Erreur lors de la suppression du fichier {file_path}: {e}")
+
+# Supprimer les fichiers journaux
+def clean_logs():
+    logs_dir = os.path.join('C:\\Windows\\Logs')
+    for root, dirs, files in os.walk(logs_dir):
+        for file in files:
+            file_path = os.path.join(root, file)
+            try:
+                os.remove(file_path)
+                print(f"Fichier supprimé : {file_path}")
+            except Exception as e:
+                print(f"Erreur lors de la suppression du fichier {file_path}: {e}")
+
+# Supprimer les raccourcis inutilisés
+def clean_unused_shortcuts():
+    desktop_dir = os.path.expanduser('~\\Desktop')
+    for root, dirs, files in os.walk(desktop_dir):
+        for file in files:
+            file_path = os.path.join(root, file)
+            if not os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                    print(f"Raccourci supprimé : {file_path}")
+                except Exception as e:
+                    print(f"Erreur lors de la suppression du raccourci {file_path}: {e}")
+
+# Supprimer les entrées de registre obsolètes
+def clean_registry():
+    key_paths = [
+        r'Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU',
+        r'Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs'
+    ]
+    for key_path in key_paths:
+        try:
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS)
+            winreg.DeleteKey(key, '')
+            print(f"Clé de registre supprimée : {key_path}")
+        except Exception as e:
+            print(f"Erreur lors de la suppression de la clé de registre {key_path}: {e}")
+
+# Vider le cache DNS
+def flush_dns_cache():
+    subprocess.run('ipconfig /flushdns', shell=True)
+    print("Cache DNS vidé avec succès.")
+
+# Supprimer les fichiers de journaux d'erreurs
+def clean_error_logs():
+    error_logs_dir = os.path.join('C:\\Windows\\System32\\LogFiles')
+    for root, dirs, files in os.walk(error_logs_dir):
+        for file in files:
+            file_path = os.path.join(root, file)
+            try:
+                os.remove(file_path)
+                print(f"Fichier de journal d'erreurs supprimé : {file_path}")
+            except Exception as e:
+                print(f"Erreur lors de la suppression du fichier de journal d'erreurs {file_path}: {e}")
+
+# Fonction principale pour exécuter les opérations de nettoyage
+def main():
+    print("Nettoyage en cours...")
+    clean_temp_files()
+    empty_recycle_bin()
+    clean_cache()
+    clean_logs()
+    clean_unused_shortcuts()
+    clean_registry()
+    flush_dns_cache()
+    clean_error_logs()
+    print("Nettoyage terminé.")
+
+# Exécution du script
+main()

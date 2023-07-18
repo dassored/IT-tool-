@@ -1,0 +1,17 @@
+import subprocess
+
+def create_user(username, password):
+        # Crée un nouvel utilisateur avec le nom d'utilisateur et le mot de passe spécifiés
+        command ='net user {} {}'.format(username, password)
+        subprocess.call (command, shell=True)
+
+# Liste des utilisateurs à créer
+users = [ {'username': 'utilisateur1', 'password': 'motdepasse1'},
+    {'username': 'utilisateur2', 'password': 'motdepasse2'},
+    {'username': 'utilisateur3', 'password': 'motdepasse3'}
+    ]
+
+# Création des utilisateurs
+for user in users:
+    create_user(user['username'], user['password'])
+    print("Utilisateurs créés avec succès.")

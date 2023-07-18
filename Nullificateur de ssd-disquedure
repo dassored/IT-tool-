@@ -1,0 +1,35 @@
+import os
+import random
+import tkinter as tk
+from tkinter import filedialog, messagebox
+
+def secure_erase_drive(drive_path):
+   # Remplit le disque avec des données aléatoires
+    with open(drive_path, 'wb') as drive:
+        drive.write(os.urandom(5000)) # Écriture de données aléatoires sur le disque
+
+        # Supprime les données écrites en écrivant des zéros sur tout le disque
+        with open(drive_path, 'wb') as drive:
+            drive.seek(0)
+            drive.write(b'\x00' * os.path.getsize(drive_path))
+
+messagebox.showinfo("Terminé", "Effacement sécurisé du disque dur terminé.")
+
+def select_drive():
+    drive_path = filedialog.askopenfilename(title="Sélectionner un disque dur", filetypes=[("Disques durs", "*")])
+    if drive_path:
+        confirmation = messagebox.askyesno(("Confirmation", f"Êtes-vous sûr de vouloir effacer le disque dur à {drive_path} ?"))
+        if confirmation:
+            secure_erase_drive(drive_path)
+    else:
+        messagebox.showwarning("Avertissement", "Aucun disque dur sélectionné.")
+
+# Création de la fenêtre principale
+window = tk.Tk()
+window.title("Effacement sécurisé du disque dur")   
+
+# Bouton de sélection du disque dur
+select_button = tk.Button(window, text="Sélectionner un disque dur", command=select_drive)
+select_button.pack(pady=20)
+
+window.mainloop()

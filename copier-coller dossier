@@ -1,0 +1,24 @@
+import os
+import shutil
+
+def copy_folder(source_folder, destination_folder):
+    # Vérifie si le dossier source existe
+    if not os.path.exists(source_folder):
+        print(f"Dossier source '{source_folder}' n'existe pas.")
+        return
+
+    # Copie le dossier et son contenu vers le dossier de destination
+    try:
+        shutil.copytree(source_folder, destination_folder)
+        print("Copie du dossier terminée avec succès.")
+    except Exception as e:
+        print(f"Une erreur s'est produite lors de la copie du dossier : {str(e)}")
+
+# Chemin du dossier source
+source_folder_path = '/chemin/vers/dossier_source'
+
+# Chemin du dossier de destination
+destination_folder_path = '/chemin/vers/dossier_destination'
+
+# Copie du dossier
+copy_folder(source_folder_path, destination_folder_path)

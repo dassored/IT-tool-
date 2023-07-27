@@ -1,0 +1,76 @@
+import pyopencl as cl
+import numpy as np
+import time
+
+def benchmark_gpu():
+    try:
+        # Recherchez les plateformes OpenCL disponibles
+        platforms = cl.get_platforms()
+
+        # Choisissez la première plateforme disponible
+        platform = platforms[0]
+
+        # Recherchez les périphériques GPU disponibles sur la plateforme
+        devices = platform.get_devices(device_type=cl.device_type.GPU)
+
+        # Choisissez le premier périphérique GPU disponible
+        device = devices[0]
+
+        # Créez un contexte OpenCL
+        ctx = cl.Context([device])
+
+        # Chargez le code du kernel OpenCL
+        kernel_code = """
+            __kernel void benchmark(__global float* in_data, __global float* out_data) {
+                int gid = get_global_id(0);
+                out_data[gid] = in_data[gid] * in_data[gid];
+            }
+        """
+
+        # Compilez le kernel OpenCL
+        prg = cl.Program(ctx, kernel_code).build()
+
+        # Définissez la taille des données
+        data_size = 1000000
+
+        # Générez des données d'entrée aléatoires
+        input_data = np.random.rand(data_size).astype(np.float32)
+
+        # Créez les buffers pour les données d'entrée et de sortie
+        mf = cl.mem_flags
+        in_buffer = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=input_data)
+        out_buffer = cl.Buffer(ctx, mf.WRITE_ONLY, input_data.nbytes)
+
+        # Créez une commande de file d'attente pour exécuter le kernel OpenCL
+        queue = cl.CommandQueue(ctx)
+
+        # Exécutez le kernel OpenCL
+        global_size = input_data.shape
+        local_size = None
+        queue.enqueue_nd_range_kernel(prg.benchmark, global_size, local_size)
+
+        # Récupérez les données de sortie du périphérique
+        output_data = np.empty_like(input_data)
+        cl.enqueue_copy(queue, output_data, out_buffer)
+
+        # Vérifiez le temps d'exécution
+        start_time = time.time()
+        queue.enqueue_nd_range_kernel(prg.benchmark, global_size, local_size)
+        queue.finish()
+        end_time = time.time()
+
+        # Calculer le temps d'exécution en secondes
+        execution_time = end_time - start_time
+
+        # Calculez le débit (nombre de calculs par seconde)
+        throughput = data_size / execution_time
+
+        # Affichez les résultats du benchmark
+        print("Temps d'exécution : {:.5f} secondes".format(execution_time))
+        print("Débit : {:.2f} calculs par seconde".format(throughput))
+
+    except Exception as e:
+        print("Une erreur s'est produite lors du benchmarking : {}".format(e))
+
+if __name__ == "__main__":
+    benchmark_gpu()

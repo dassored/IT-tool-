@@ -1,0 +1,26 @@
+import android
+
+def get_basic_device_info(droid):
+    info = {}
+    info["Brand"] = droid.getBuildManufacturer()
+    info["Model"] = droid.getBuildModel()
+    info["Android Version"] = droid.getBuildVersionRelease()
+    info["Serial Number"] = droid.getBuildSerial()
+    info["Battery Level"] = droid.batteryGetLevel()
+    info["Battery Status"] = droid.batteryGetStatus()
+    info["Screen Resolution"] = droid.getDisplayWidth(), droid.getDisplayHeight()
+    info["IP Address"] = droid.wifiGetConnectionInfo().result["ip_address"]
+    info["MAC Address"] = droid.wifiGetConnectionInfo().result["mac_address"]
+    
+    return info
+
+def main():
+    droid = android.Android()
+    info = get_basic_device_info(droid)
+    
+    print("Basic Device Information:")
+    for key, value in info.items():
+        print(f"{key}: {value}")
+        
+if __name__ == "__main__":
+    main()

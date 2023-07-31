@@ -1,0 +1,46 @@
+import platform
+import psutil
+import socket
+import subprocess
+
+def check_os():
+    print(f"Operating System: {platform.system()} {platform.release()}")
+
+def check_cpu():
+    cpu_info = platform.processor()
+    print(f"CPU: {cpu_info}")
+
+def check_memory():
+    total_memory = psutil.virtual_memory().total
+    print(f"Total Memory: {total_memory / (1024 ** 3)} GB")
+
+def check_disk_space():
+    disk_info = psutil.disk_usage('/')
+    print(f"Disk Space: Total {disk_info.total / (1024 ** 3)} GB, Free {disk_info.free / (1024 ** 3)} GB")
+
+def check_network():
+    host_name = socket.gethostname()
+    host_ip = socket.gethostbyname(host_name)
+    print(f"Host Name: {host_name}")
+    print(f"IP Address: {host_ip}")
+
+def check_internet_connection():
+    try:
+        subprocess.check_call(["ping", "-c", "1", "8.8.8.8"])
+        print("Internet Connection: Active")
+    except subprocess.CalledProcessError:
+        print("Internet Connection: Inactive")
+
+def main():
+    print("PC Test Script - Checking System Information")
+    print("-----------------------------------------")
+
+    check_os()
+    check_cpu()
+    check_memory()
+    check_disk_space()
+    check_network()
+    check_internet_connection()
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,23 @@
+import subprocess
+
+def run_command(command):
+    try:
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        if result.returncode == 0:
+            print("Résultat de la commande :")
+            print(result.stdout)
+        else:
+            print(f"Erreur lors de l'exécution de la commande : {result.stderr}")
+    except Exception as e:
+        print(f"Une erreur s'est produite : {e}")
+
+def main():
+    while True:
+        user_input = input("Entrez une commande Linux (ou 'exit' pour quitter) : ")
+        if user_input.lower() == 'exit':
+            break
+        else:
+            run_command(user_input)
+
+if __name__ == "__main__":
+    main()

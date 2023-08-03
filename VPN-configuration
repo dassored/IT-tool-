@@ -1,0 +1,31 @@
+# Serveur OpenVPN
+port 1194
+proto udp
+dev tun
+
+# Chemins des certificats et des clés
+ca ca .crt
+cert server .crt
+key server .key
+dh dh .pem
+
+
+reseau VPN
+server 10.8.0.0 255.255.255.0
+
+
+#option de routage
+
+push "redirect-gateway def1 bypass-dhcp"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
+
+#securité
+cipher AES-256-CBC 
+auth sha256 
+
+
+#log
+
+log-append /var/log/openvpn.log
+verb 3

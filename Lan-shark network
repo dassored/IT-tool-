@@ -1,0 +1,33 @@
+import psutil
+import socket
+import time
+
+def get_remote_host(ip_address):
+    try:
+        return socket.gethostbyaddr(ip_address)[0]
+    except socket.herror:
+        return ip_address
+
+def monitor_network_traffic(interval=5):
+    print("Surveillance du trafic réseau en cours. Appuyez sur Ctrl+C pour arrêter.")
+    print("{:<20} {:<30} {:<15} {:<15}".format("PROTOCOLE", "ADRESSE DISTANTE", "PORT LOCAL", "PORT DISTANT"))
+
+    try:
+        while True:
+            connections = psutil.net_connections(kind='inet')
+            for conn in connections:
+                if conn.status == psutil.CONN_ESTABLISHED:
+                    local_address = f"{conn.laddr.ip}:{conn.laddr.port}"
+                    remote_address = f"{get_remote_host(conn.raddr.ip)}:{conn.raddr.port}"
+                    protocol = conn.type
+
+                    print("{:<20} {:<30} {:<15} {:<15}".format(protocol, remote_address, local_address, conn.raddr.port))
+
+            time.sleep(interval)
+    except KeyboardInterrupt:
+        print("\nSurveillance du trafic réseau arrêtée.")
+
+if __name__ == "__main__":
+    # Vous pouvez personnaliser l'intervalle de surveillance en secondes (par défaut : 5 secondes)
+    interval = 5
+    monitor_network_traffic(interval)

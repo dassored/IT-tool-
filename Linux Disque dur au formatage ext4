@@ -1,0 +1,26 @@
+import subprocess
+
+def format_disk(disk_path):
+    try:
+        # Vérifier si le chemin du disque est valide
+        result = subprocess.run(['lsblk', '--list', '-o', 'NAME', disk_path], capture_output=True, text=True)
+        if not result.stdout.strip():
+            print(f"Le chemin du disque '{disk_path}' n'est pas valide.")
+            return
+
+        # Demander confirmation avant de procéder
+        confirmation = input(f"Voulez-vous vraiment formater le disque '{disk_path}' en ext4 ? (Oui/Non): ")
+        if confirmation.lower() != 'oui':
+            print("Opération annulée.")
+            return
+
+        # Formater le disque en ext4
+        subprocess.run(['sudo', 'mkfs.ext4', disk_path])
+
+        print(f"Le disque '{disk_path}' a été formaté en ext4 avec succès.")
+    except Exception as e:
+        print(f"Une erreur s'est produite lors du formatage du disque : {e}")
+
+if __name__ == "__main__":
+    disk_path = input("Veuillez saisir le chemin du disque à formater (ex: /dev/sdX): ")
+    format_disk(disk_path)

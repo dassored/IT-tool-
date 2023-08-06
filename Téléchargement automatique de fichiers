@@ -1,0 +1,24 @@
+import requests
+import os
+
+def telecharger_fichier(url, dossier_destination):
+    try:
+        # Obtenir le nom du fichier à partir de l'URL 
+        nom_fichier = os.path.join(dossier_destination, url.split("/")[-1])
+   
+        # Effectuer la requête HTTP pour télécharger le fichier
+        reponse = requests.get(url)
+        reponse.raise_for_status()
+        
+        # Écrire le contenu du fichier téléchargé dans le dossier de destination
+        with open(nom_fichier, "wb") as fichier:
+            fichier.write(reponse.content)  
+            
+        print(f"Le fichier {nom_fichier} a été téléchargé avec succès.")
+    except requests.exceptions.RequestException as e:
+        print(f"Une erreur s'est produite lors du téléchargement : {e}")
+
+# Exemple d'utilisation
+url_fichier = "https://exemple.com/mon_fichier.txt"
+dossier_destination = "chemin/vers/le/dossier"
+telecharger_fichier(url_fichier, dossier_destination)

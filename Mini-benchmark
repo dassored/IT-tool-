@@ -1,0 +1,23 @@
+import time
+
+def benchmark_operation(iterations):
+    start_time = time.time()
+
+    for _ in range(iterations):
+        # Exemple d'opération à mesurer (addition de deux nombres)
+        result = 1 + 1
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+
+    return elapsed_time
+
+def main():
+    iterations = int(input("Entrez le nombre d'itérations pour le benchmark : "))
+    elapsed_time = benchmark_operation(iterations)
+
+    print(f"Temps total écoulé : {elapsed_time:.6f} secondes")
+    print(f"Temps moyen par itération : {elapsed_time / iterations:.6f} secondes")
+
+if __name__ == "__main__":
+    main()

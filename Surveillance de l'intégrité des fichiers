@@ -1,0 +1,56 @@
+import os
+import hashlib
+import time
+
+# Dossier à surveiller
+folder_to_monitor = "/chemin/vers/le/dossier"
+
+# Délai entre les vérifications (en secondes)
+check_interval = 300  # 5 minutes
+
+# Dictionnaire pour stocker les empreintes numériques actuelles
+file_hashes = {}
+
+def generate_hash(file_path):
+    """Génère l'empreinte numérique (hash) d'un fichier."""
+    hasher = hashlib.sha256()
+
+    with open(file_path, 'rb') as f:
+        while chunk := f.read(8192):
+            hasher.update(chunk)
+
+    return hasher.hexdigest()
+
+def update_hashes():
+    """Mise à jour des empreintes numériques pour les fichiers du dossier."""
+    global file_hashes
+    new_hashes = {}
+
+    for root, _, files in os.walk(folder_to_monitor):
+        for file in files:
+            file_path = os.path.join(root, file)
+            new_hashes[file_path] = generate_hash(file_path)
+
+    file_hashes = new_hashes
+
+def check_integrity():
+    """Vérifie l'intégrité des fichiers en comparant les empreintes numériques."""
+    for file_path, current_hash in file_hashes.items():
+        if not os.path.exists(file_path):
+            print(f"Fichier introuvable : {file_path}")
+            continue
+
+        new_hash = generate_hash(file_path)
+        if new_hash != current_hash:
+            print(f"Modification détectée dans le fichier : {file_path}")
+
+def main():
+    print("Surveillance de l'intégrité des fichiers en cours...")
+
+    while True:
+        update_hashes()
+        check_integrity()
+        time.sleep(check_interval)
+
+if __name__ == "__main__":
+    main()

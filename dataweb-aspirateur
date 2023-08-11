@@ -1,0 +1,42 @@
+import os
+import requests
+from bs4 import BeautifulSoup
+
+def extract_links(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            links = soup.find_all('a')
+            return links
+        else:
+            print(f"Failed to retrieve the page. Status code: {response.status_code}")
+            return []
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
+        return []
+
+def main():
+    url = "https://www.journaldugeek.com"  # You can directly set the URL here
+    links = extract_links(url)
+
+    if links:
+        action = input("Do you want to display the links (D) or save them to a file (S)? ").upper()
+
+        if action == 'D':
+            print("Extracted links:")
+            for link in links:
+                print(link.get('href'))
+        elif action == 'S':
+            file_name = "dataweb.txt"  # Set the filename to "dataweb.txt"
+            download_path = os.path.expandvars("%USERPROFILE%\\Downloads")  # Get the Downloads folder path
+            file_path = os.path.join(download_path, file_name)  # Combine with file name
+            with open(file_path, 'w') as file:
+                for link in links:
+                    file.write(link.get('href') + '\n')
+            print(f"Links saved to '{file_path}'")
+        else:
+            print("Invalid choice. Exiting.")
+
+if __name__ == "__main__":
+    main()

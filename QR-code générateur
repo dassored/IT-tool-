@@ -1,0 +1,33 @@
+import os
+import qrcode
+from pathlib import Path
+
+# URL du site Web à générer en QR code
+site_web_url = "https://www.journaldugeek.com/"
+
+# Créez un objet QRCode
+qr = qrcode.QRCode(
+    version=1,
+    error_correction=qrcode.constants.ERROR_CORRECT_L,
+    box_size=10,
+    border=4,
+)
+
+# Ajoutez les données (URL) à l'objet QRCode
+qr.add_data(site_web_url)
+qr.make(fit=True)
+
+# Créez une image QR code (format PNG)
+img = qr.make_image(fill_color="black", back_color="white")
+
+# Chemin du dossier de téléchargement de l'utilisateur
+dossier_telechargement = str(Path.home() / "Downloads")
+
+# Chemin complet du fichier de QR code
+nom_fichier = "qrcode_journal_du_geek.png"
+chemin_complet = os.path.join(dossier_telechargement, nom_fichier)
+
+# Enregistrez l'image QR code dans le dossier de téléchargement
+img.save(chemin_complet)
+
+print(f"QR code généré avec succès pour le site Web du Journal du Geek. Enregistré dans le dossier de téléchargement.")

@@ -1,0 +1,54 @@
+import imaplib
+import email
+import os
+
+# Paramètres de connexion à la boîte de réception
+imap_server = 'imap.example.com'
+username = 'your_email@example.com'
+password = 'your_password'
+
+# Chemin vers le dossier de sauvegarde
+backup_folder = 'backup_emails'
+
+def save_email_to_text(filename, content):
+    with open(filename, 'w') as file:
+        file.write(content)
+
+def backup_important_emails():
+    # Connexion au serveur IMAP
+    mail = imaplib.IMAP4_SSL(imap_server)
+    mail.login(username, password)
+    mail.select("inbox")  # Sélectionnez la boîte de réception
+
+    # Recherchez les courriels importants (vous pouvez personnaliser le critère de recherche)
+    result, email_ids = mail.search(None, 'SUBJECT "important"')
+
+    if result == 'OK':
+        email_ids = email_ids[0].split()
+        for email_id in email_ids:
+            # Récupérez le courriel
+            result, data = mail.fetch(email_id, '(RFC822)')
+            raw_email = data[0][1]
+
+            # Analysez le courriel en tant qu'objet EmailMessage
+            msg = email.message_from_bytes(raw_email)
+            
+            # Créez un nom de fichier basé sur l'objet du courriel
+            filename = os.path.join(backup_folder, f"email_{email_id}.txt")
+            
+            # Sauvegardez le contenu du courriel dans un fichier texte
+            save_email_to_text(filename, str(msg))
+
+    # Déconnexion du serveur IMAP
+    mail.logout()
+
+def main():
+    if not os.path.exists(backup_folder):
+        os.makedirs(backup_folder)
+    
+    print("Sauvegarde des courriels importants...")
+    backup_important_emails()
+    print("Sauvegarde terminée.")
+
+if __name__ == "__main__":
+    main()

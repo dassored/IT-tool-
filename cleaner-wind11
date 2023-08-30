@@ -1,0 +1,35 @@
+import os
+import shutil
+
+def clean_temp_files():
+    temp_folders = [
+        os.path.join(os.environ.get("TEMP"), "TempFolder1"),
+        os.path.join(os.environ.get("TEMP"), "TempFolder2")
+    ]
+    
+    for folder in temp_folders:
+        if os.path.exists(folder):
+            shutil.rmtree(folder)
+            print(f"Deleted: {folder}")
+        else:
+            print(f"Folder not found: {folder}")
+
+def clean_recent_documents():
+    recent_documents_folder = os.path.join(os.environ.get("APPDATA"), "Microsoft", "Windows", "Recent")
+    
+    for file in os.listdir(recent_documents_folder):
+        file_path = os.path.join(recent_documents_folder, file)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+            print(f"Deleted: {file_path}")
+
+def main():
+    print("Starting cleaning process...")
+    
+    clean_temp_files()
+    clean_recent_documents()
+    
+    print("Cleaning process completed.")
+
+if __name__ == "__main__":
+    main()
